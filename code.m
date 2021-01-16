@@ -1,8 +1,30 @@
 %Code for AUTh Reliability course assignment by Antonios Favvas and Angelos Vlachos
 
-%Setting up step and time discretization
-step=0.001
-x=step:step:1.1;
+%Setting up timestep and time discretization
+timestep=0.001
+x=timestep:timestep:1.1;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Generating 1 million random values from the 3 different Weibull distibutions
+results1=wblrnd(1,0.2,1000000,1);
+results2=wblrnd(4,1,1000000,1);
+results3=wblrnd(1,5,1000000,1);
+
+%Plotting these random values as histograms and results should match each pdf 
+% figure('Name','Random values from 1st case')
+% histogram(results1(results1<=1.1))
+% xlabel('Time') 
+% ylabel('Number of Values')
+% 
+% figure('Name','Random values from 2nd case')
+% histogram(results2(results2<=1.1))
+% xlabel('Time') 
+% ylabel('Number of Values')
+% 
+% figure('Name','Random values from 3rd case')
+% histogram(results3(results3<=1.1))
+% xlabel('Time') 
+% ylabel('Number of Values')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -63,7 +85,7 @@ R3 = 1 - cdf3;
 % plot(x,pdf3)
 % xlabel('Observation')
 % ylabel('Probability Density')
-% 
+% % 
 % figure('Name','Cumulative distribution function of Failures due to aging')
 % plot(x,cdf3)
 % xlabel('Observation')
@@ -76,28 +98,7 @@ R3 = 1 - cdf3;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%Generating 1 million random values from the 3 different Weibull distibutions
-results1=wblrnd(1,0.2,1000000,1);
-results2=wblrnd(4,1,1000000,1);
-results3=wblrnd(1,5,1000000,1);
 
-%Plotting these random values as histograms and results should match each pdf 
-% figure('Name','Random values from 1st case')
-% histogram(results1(results1<=1.1))
-% xlabel('Time') 
-% ylabel('Number of Values')
-% 
-% figure('Name','Random values from 2nd case')
-% histogram(results2(results2<=1.1))
-% xlabel('Time') 
-% ylabel('Number of Values')
-% 
-% figure('Name','Random values from 3rd case')
-% histogram(results3(results3<=1.1))
-% xlabel('Time') 
-% ylabel('Number of Values')
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %Calculating the 3 different hazard rates of the 3 different Weibull distributions
 hazard1=pdf1./(1-cdf1);
@@ -138,9 +139,9 @@ tests=zeros(numberoftests,1);
  for i = 1:numberoftests
      %Create a vector that tells us for every point in time whether the
      %component failed or not from the poisson distribution and vector
-     %lambda multiplied by the step so each ? refers to each step of time
+     %lambda multiplied by the timestep so each ? refers to each timestep of time
      %in the 1.1 second period
-     y = poissrnd(lambda*step);
+     y = poissrnd(lambda*timestep);
      %Find the exact times when the component failed
      timesoffailure = find(y==1);
      %If the vector is empty then the component did not fail so put value 0 in the results vector
@@ -148,7 +149,7 @@ tests=zeros(numberoftests,1);
          tests(i)=0;
      %Else add the first time the component failed into the results vector(exact time in seconds)
      else
-         tests(i)=timesoffailure(1)*step;
+         tests(i)=timesoffailure(1)*timestep;
      end
  end
  %Now in the tests vector we have the time the component failed for each experiment and the value 0 if it did not fail
@@ -157,6 +158,7 @@ tests=zeros(numberoftests,1);
  Reliability = length(reliabilityindeces)/length(tests)*100
  MTTF = sum(tests((tests~=0)))/length(find(tests~=0))
  hazardRate = 1/MTTF
+ 
 %Compare results with simple exponential model with mu = 1/hazard_mean
 % r = exprnd(1/hazard_mean,1,10000);
 % ri=find(r>1.1);
@@ -174,10 +176,10 @@ tests_system=zeros(numberoftests,1);
 for i = 1:numberoftests
      %Create a vector for each component that tells us for every point in time whether the
      %component failed or not from the poisson distribution and vector
-     %lambda multiplied by the step so each ? refers to each step of time
+     %lambda multiplied by the timestep so each ? refers to each timestep of time
      %in the 1.1 second period
-     y1 = poissrnd(lambda*step);
-     y2 = poissrnd(lambda*step);
+     y1 = poissrnd(lambda*timestep);
+     y2 = poissrnd(lambda*timestep);
      %Find the exact times when the components failed
      timesoffailure1 = find(y1==1);
      timesoffailure2 = find(y2==1);
@@ -187,13 +189,13 @@ for i = 1:numberoftests
          tests_system(i)=0;
      %Else if only the second component failed the result is the time the time that it failed
      elseif(isempty(timesoffailure1))
-              tests_system(i)=timesoffailure2(1)*step;
+              tests_system(i)=timesoffailure2(1)*timestep;
      %Else if only the second component failed the result is the time the time that it failed
      elseif(isempty(timesoffailure2))
-              tests_system(i)=timesoffailure1(1)*step;
+              tests_system(i)=timesoffailure1(1)*timestep;
      %Else if both have failed the result is the time when the first fault happened out of both components         
      else
-              tests_system(i) = min(timesoffailure1(1)*step,timesoffailure2(1)*step);
+              tests_system(i) = min(timesoffailure1(1)*timestep,timesoffailure2(1)*timestep);
      end
      
 end
