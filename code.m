@@ -138,8 +138,9 @@ tests=zeros(numberoftests,1);
 %Code in for loop executes once per experiment and creates 1 result
  for i = 1:numberoftests
      %Create a vector that tells us for every point in time whether the
-     %component failed or not from the poisson distribution and vector
-     %lambda multiplied by the timestep so each ? refers to each timestep of time
+     %component failed or not from the poisson distribution
+     %Inputs: vector lambda multiplied by the timestep so each input ?
+     %refers to each timestep
      %in the 1.1 second period
      y = poissrnd(lambda*timestep);
      %Find the exact times when the component failed
@@ -174,9 +175,10 @@ tests_system=zeros(numberoftests,1);
 
 
 for i = 1:numberoftests
-     %Create a vector for each component that tells us for every point in time whether the
-     %component failed or not from the poisson distribution and vector
-     %lambda multiplied by the timestep so each ? refers to each timestep of time
+     %Create a vector y for each component that tells us for every point in time whether the
+     %component failed or not from the poisson distribution
+     %Inputs: vector lambda multiplied by the timestep so each input ?
+     %refers to each timestep
      %in the 1.1 second period
      y1 = poissrnd(lambda*timestep);
      y2 = poissrnd(lambda*timestep);
